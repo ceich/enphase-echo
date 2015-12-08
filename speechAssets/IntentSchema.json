@@ -1,0 +1,16 @@
+{
+  "intents": [
+    {
+      "intent": "GetEnergy",
+      "slots": [
+        {
+          "name": "Duration",
+          "type": "LIST_OF_DURATIONS"
+        }
+      ]
+    },
+    {
+      "intent": "GetPower"
+    }
+  ]
+}
