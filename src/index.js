@@ -166,30 +166,11 @@ function getWelcomeResponse(response) {
  * Get array power
  */
  function handleGetPowerRequest(intent, session, response){
-	var sessionAttributes = {};
-	/**
-	var speechOutput = {
-			speech: "<speak>" + "This is the speak text" + "</speak>",
-            type: AlexaSkill.speechOutputType.SSML
-        };
-	var repromptOutput = {
-            speech: repromptText,
-            type: AlexaSkill.speechOutputType.PLAIN_TEXT
-        };
-    var cardTitle = "This is the card title.";
-	var cardContent = "This is the card content.";
-	response.askWithCard(speechOutput, repromptOutput, cardTitle, cardContent);
-	*/
-	getJsonSummaryFromEnphase(function (events) {
-		var event_data, parsed_event_data, Power;
-		event_data = events[3];
-		parsed_event_data = event_data.split(':');
-		Power = parsed_event_data[1];
+	getJsonSummaryFromEnphase(function (solar_data) {
+		var Power = solar_data.current_power;
         var speechText = "Your array is currently producing " + Power + "W.";
 		var cardTitle = "Enphase solar array power production.";
 		var cardContent = "This is the card content.";
-        sessionAttributes.text = events;
-        session.attributes = sessionAttributes;
         speakText = "This is the speech text."
         var speechOutput = {
 			speech: "<speak>" + speechText + "</speak>",
@@ -206,7 +187,6 @@ function getWelcomeResponse(response) {
 	
 	var DurationSlot = intent.slots.Duration;
 	var Duration = "";
-	var sessionAttributes = {};
 
 	if (DurationSlot == null){
 		Duration = "parsec";
@@ -215,16 +195,11 @@ function getWelcomeResponse(response) {
 		Duration = DurationSlot.value;
 	}
 	
-	getJsonSummaryFromEnphase(function (events) {
-		var event_data, parsed_event_data, Power;
-		event_data = events[4];
-		parsed_event_data = event_data.split(':');
-		Energy = parsed_event_data[1];
+	getJsonSummaryFromEnphase(function (solar_data) {
+		Energy = solar_data.energy_today;
 		var speechText = "Your array has produced " + Energy + "Wh in the last " + Duration;
 		var cardTitle = "Enphase solar array energy production.";
 		var cardContent = "This is the card content.";
-		sessionAttributes.text = events;
-		session.attributes = sessionAttributes;
 		speakText = "This is the speech text."
 		var speechOutput = {
 			speech: "<speak>" + speechText + "</speak>",
@@ -368,11 +343,12 @@ function getJsonSummaryFromEnphase(eventCallback){
     });
 }
 
-function parseJson(inputText) {
+function parseJson(json_string) {
 	//{"system_id":67,"modules":35,"size_w":6650,"current_power":2,"energy_today":8913,"energy_lifetime":67817739,"summary_date":"2015-12-07","source":"microinverters","status":"normal","operational_at":1201362300,"last_report_at":1449549169,"last_interval_end_at":1449549000}
-    var retArr;
-	retArr = inputText.split(',');
-    return retArr;
+    var json_obj;
+	//retArr = json_string.split(',');
+	json_obj = JSON.parse(json_string);
+    return json_obj;
 }
 
 // Create the handler that responds to the Alexa Request.
