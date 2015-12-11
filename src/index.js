@@ -166,7 +166,6 @@ function getWelcomeResponse(response) {
  * Get array power
  */
  function handleGetPowerRequest(intent, session, response){
-	var repromptText = "You can ask Enphase for power production."
 	var sessionAttributes = {};
 	/**
 	var speechOutput = {
@@ -196,11 +195,7 @@ function getWelcomeResponse(response) {
 			speech: "<speak>" + speechText + "</speak>",
             type: AlexaSkill.speechOutputType.SSML
         };
-        var repromptOutput = {
-            speech: repromptText,
-            type: AlexaSkill.speechOutputType.PLAIN_TEXT
-        };
-        response.askWithCard(speechOutput, repromptOutput, cardTitle, cardContent)
+        response.tellWithCard(speechOutput, cardTitle, cardContent)
     });
  }
  
@@ -208,42 +203,35 @@ function getWelcomeResponse(response) {
  * Get array energy
  */
  function handleGetEnergyRequest(intent, session, response){
-	var repromptText = "You can ask Enphase for energy production."
+	
+	var DurationSlot = intent.slots.Duration;
+	var Duration = "";
 	var sessionAttributes = {};
-	/**
-	var speechOutput = {
-			speech: "<speak>" + "This is the speak text" + "</speak>",
-            type: AlexaSkill.speechOutputType.SSML
-        };
-	var repromptOutput = {
-            speech: repromptText,
-            type: AlexaSkill.speechOutputType.PLAIN_TEXT
-        };
-    var cardTitle = "This is the card title.";
-	var cardContent = "This is the card content.";
-	response.askWithCard(speechOutput, repromptOutput, cardTitle, cardContent);
-	*/
+
+	if (DurationSlot == null){
+		Duration = "parsec";
+	}
+	else{
+		Duration = DurationSlot.value;
+	}
+	
 	getJsonSummaryFromEnphase(function (events) {
 		var event_data, parsed_event_data, Power;
 		event_data = events[4];
 		parsed_event_data = event_data.split(':');
 		Energy = parsed_event_data[1];
-        var speechText = "Your array has produced " + Energy + "Wh today.";
+		var speechText = "Your array has produced " + Energy + "Wh in the last " + Duration;
 		var cardTitle = "Enphase solar array energy production.";
 		var cardContent = "This is the card content.";
-        sessionAttributes.text = events;
-        session.attributes = sessionAttributes;
-        speakText = "This is the speech text."
-        var speechOutput = {
+		sessionAttributes.text = events;
+		session.attributes = sessionAttributes;
+		speakText = "This is the speech text."
+		var speechOutput = {
 			speech: "<speak>" + speechText + "</speak>",
-            type: AlexaSkill.speechOutputType.SSML
-        };
-        var repromptOutput = {
-            speech: repromptText,
-            type: AlexaSkill.speechOutputType.PLAIN_TEXT
-        };
-        response.askWithCard(speechOutput, repromptOutput, cardTitle, cardContent)
-    });
+			type: AlexaSkill.speechOutputType.SSML
+		};
+		response.tellWithCard(speechOutput, cardTitle, cardContent)
+	});
  }
  
 /**
