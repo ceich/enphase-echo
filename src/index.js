@@ -106,6 +106,10 @@ EnphaseSkill.prototype.intentHandlers = {
         handleGetEnergyRequest(intent, session, response);
     },
 	
+	"GetStatus": function (intent, session, response) {
+        handleGetStatusRequest(intent, session, response);
+    },
+	
     "AMAZON.HelpIntent": function (intent, session, response) {
         var speechText = "With Enphase, you can request information on the performance of your Enphase solar array." +
             "For example, you can ask, how much energy has my array produced in the last week?";
@@ -207,6 +211,42 @@ function getWelcomeResponse(response) {
 		response.tellWithCard(speechOutput, cardTitle, cardContent)
 	});
  }
+ 
+/**
+ * Gets the status of the solar array
+ */
+function handleGetStatusRequest(intent, session, response){
+//{"system_id":67,"modules":35,
+//"size_w":6650,
+//"current_power":2,
+//"energy_today":8913,
+//"energy_lifetime":67817739,
+//"summary_date":"2015-12-07",
+//"source":"microinverters",
+//"status":"normal",
+//"operational_at":1201362300,
+//"last_report_at":1449549169,
+//"last_interval_end_at":1449549000}
+
+	getJsonSummaryFromEnphase(function (solar_data) {
+		var StatusStr = "";
+		var ReportStr = "";
+		if (solar_data.status == "normal"){
+			var Power = solar_data.current_power;
+			var Energy = solar_data.energy_today;
+			StatusStr = "Your array is operating normally. "
+			ReportStr = "It is currently producing " + Power + "watts of power. " +
+			"So far it has produced " +  Energy + "watt-hours if energy today."
+		}else {
+			StatusStr = "There appears to be an issue with you array."
+		}
+		
+		
+		var ArraySize = solar_data.size_w;
+		var speechText = StatusStr + ReportStr;
+		response.tell(speechText)
+	});
+}
  
 /**
  * Gets a poster prepares the speech to reply to the user.

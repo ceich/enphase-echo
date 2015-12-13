@@ -11,3 +11,11 @@ GetEnergy what is my energy
 GetPower what is my power
 GetPower whats my power
 GetPower how much power
+
+GetStatus status
+GetStatus whats my status
+GetStatus what is my status
+GetStatus whats the status
+GetStatus what is the status
+GetStatus what is the status of my array
+GetStatus whats the status of my array
