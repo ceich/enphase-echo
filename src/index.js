@@ -188,12 +188,11 @@ function getWelcomeResponse(response) {
 	var DurationSlot = intent.slots.Duration;
 	var Duration = "";
 
-	if (DurationSlot == null){
-		Duration = "parsec";
-	}
-	else{
-		Duration = DurationSlot.value;
-	}
+	if (DurationSlot && DurationSlot.value) {
+        Duration = DurationSlot.value;
+    } else {
+        Duration = "day";
+    }
 	
 	getJsonSummaryFromEnphase(function (solar_data) {
 		Energy = solar_data.energy_today;
