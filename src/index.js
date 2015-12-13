@@ -236,132 +236,19 @@ function handleGetStatusRequest(intent, session, response){
 			var Energy = solar_data.energy_today;
 			StatusStr = "Your array is operating normally. "
 			ReportStr = "It is currently producing " + Power + "watts of power. " +
-			"So far it has produced " +  Energy + "watt-hours if energy today."
+			"So far it has produced " +  Energy + "Wh if energy today."
 		}else {
 			StatusStr = "There appears to be an issue with you array."
 		}
 		
-		
 		var ArraySize = solar_data.size_w;
 		var speechText = StatusStr + ReportStr;
-		response.tell(speechText)
+		var speechOutput = {
+			speech: "<speak>" + speechText + "</speak>",
+			type: AlexaSkill.speechOutputType.SSML
+		};
+		response.tell(speechOutput)
 	});
-}
- 
-/**
- * Gets a poster prepares the speech to reply to the user.
- */
-function handleFirstEventRequest(intent, session, response) {
-    var daySlot = intent.slots.day;
-    var repromptText = "With History Buff, you can get historical events for any day of the year.  For example, you could say today, or August thirtieth. Now, which day do you want?";
-    var monthNames = ["January", "February", "March", "April", "May", "June",
-                      "July", "August", "September", "October", "November", "December"
-    ];
-    var sessionAttributes = {};
-    // Read the first 3 events, then set the count to 3
-    sessionAttributes.index = paginationSize;
-    var date = "";
-
-    // If the user provides a date, then use that, otherwise use today
-    // The date is in server time, not in the user's time zone. So "today" for the user may actually be tomorrow
-    if (daySlot && daySlot.value) {
-        date = new Date(daySlot.value);
-    } else {
-        date = new Date();
-    }
-
-    var prefixContent = "<p>For " + monthNames[date.getMonth()] + " " + date.getDate() + ", </p>";
-    var cardContent = "For " + monthNames[date.getMonth()] + " " + date.getDate() + ", ";
-
-    var cardTitle = "Events on " + monthNames[date.getMonth()] + " " + date.getDate();
-
-    getJsonEventsFromWikipedia(monthNames[date.getMonth()], date.getDate(), function (events) {
-        var speechText = "",
-            i;
-        sessionAttributes.text = events;
-        session.attributes = sessionAttributes;
-        if (events.length == 0) {
-            speechText = "There is a problem connecting to Wikipedia at this time. Please try again later.";
-            cardContent = speechText;
-            response.tell(speechText);
-        } else {
-            for (i = 0; i < paginationSize; i++) {
-                cardContent = cardContent + events[i] + " ";
-                speechText = "<p>" + speechText + events[i] + "</p> ";
-            }
-            speechText = speechText + " <p>Wanna go deeper in history?</p>";
-            var speechOutput = {
-                speech: "<speak>" + prefixContent + speechText + "</speak>",
-                type: AlexaSkill.speechOutputType.SSML
-            };
-            var repromptOutput = {
-                speech: repromptText,
-                type: AlexaSkill.speechOutputType.PLAIN_TEXT
-            };
-            response.askWithCard(speechOutput, repromptOutput, cardTitle, cardContent);
-        }
-    });
-}
-
-/**
- * Gets a poster prepares the speech to reply to the user.
- */
-function handleNextEventRequest(intent, session, response) {
-    var cardTitle = "More events on this day in history",
-        sessionAttributes = session.attributes,
-        result = sessionAttributes.text,
-        speechText = "",
-        cardContent = "",
-        repromptText = "Do you want to know more about what happened on this date?",
-        i;
-    if (!result) {
-        speechText = "With History Buff, you can get historical events for any day of the year.  For example, you could say today, or August thirtieth. Now, which day do you want?";
-        cardContent = speechText;
-    } else if (sessionAttributes.index >= result.length) {
-        speechText = "There are no more events for this date. Try another date by saying <break time = \"0.3s\"/> get events for august thirtieth.";
-        cardContent = "There are no more events for this date. Try another date by saying, get events for august thirtieth.";
-    } else {
-        for (i = 0; i < paginationSize; i++) {
-            if (sessionAttributes.index>= result.length) {
-                break;
-            }
-            speechText = speechText + "<p>" + result[sessionAttributes.index] + "</p> ";
-            cardContent = cardContent + result[sessionAttributes.index] + " ";
-            sessionAttributes.index++;
-        }
-        if (sessionAttributes.index < result.length) {
-            speechText = speechText + " Wanna go deeper in history?";
-            cardContent = cardContent + " Wanna go deeper in history?";
-        }
-    }
-    var speechOutput = {
-        speech: "<speak>" + speechText + "</speak>",
-        type: AlexaSkill.speechOutputType.SSML
-    };
-    var repromptOutput = {
-        speech: repromptText,
-        type: AlexaSkill.speechOutputType.PLAIN_TEXT
-    };
-    response.askWithCard(speechOutput, repromptOutput, cardTitle, cardContent);
-}
-
-function getJsonEventsFromWikipedia(day, date, eventCallback) {
-    var url = urlPrefix + day + '_' + date;
-
-    https.get(url, function(res) {
-        var body = '';
-
-        res.on('data', function (chunk) {
-            body += chunk;
-        });
-
-        res.on('end', function () {
-            var stringResult = parseJson(body);
-            eventCallback(stringResult);
-        });
-    }).on('error', function (e) {
-        console.log("Got error: ", e);
-    });
 }
 
 function getJsonSummaryFromEnphase(eventCallback){
