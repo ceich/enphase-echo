@@ -83,9 +83,9 @@ EnphaseSkill.prototype.intentHandlers = {
     },
 	
     "AMAZON.HelpIntent": function (intent, session, response) {
-        var speechText = "With Enphase, you can request information on the performance of your Enphase solar array." +
+        var speechText = "With Enphase, you can request information on the performance of your Enphase solar array. " +
             "For example, you can ask, how much energy has my array produced in the last week?";
-        var repromptText = "What do you want to know?";
+        var repromptText = "What do you want to know about your solar array?";
         var speechOutput = {
             speech: speechText,
             type: AlexaSkill.speechOutputType.PLAIN_TEXT
