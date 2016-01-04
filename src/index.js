@@ -72,7 +72,7 @@ EnphaseSkill.prototype.intentHandlers = {
 
     "GetPower": function (intent, session, response) {
         handleGetPowerRequest(intent, session, response);
-    },
+    }, 
 	
 	"GetEnergy": function (intent, session, response) {
         handleGetEnergyRequest(intent, session, response);
@@ -117,7 +117,6 @@ EnphaseSkill.prototype.intentHandlers = {
 /**
  * Function to handle the onLaunch skill behavior
  */
-
 function getWelcomeResponse(response) {
     // If we wanted to initialize the session to have some attributes we could add those here.
     var cardTitle = "This Day in History";
@@ -233,20 +232,12 @@ function getJsonSummaryFromEnphase(eventCallback){
         });
 
         res.on('end', function () {
-            var stringResult = parseJson(body);
+            var stringResult = JSON.parse(body);
             eventCallback(stringResult);
         });
     }).on('error', function (e) {
         console.log("Got error: ", e);
     });
-}
-
-function parseJson(json_string) {
-	//{"system_id":67,"modules":35,"size_w":6650,"current_power":2,"energy_today":8913,"energy_lifetime":67817739,"summary_date":"2015-12-07","source":"microinverters","status":"normal","operational_at":1201362300,"last_report_at":1449549169,"last_interval_end_at":1449549000}
-    var json_obj;
-	//retArr = json_string.split(',');
-	json_obj = JSON.parse(json_string);
-    return json_obj;
 }
 
 // Create the handler that responds to the Alexa Request.
