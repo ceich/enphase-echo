@@ -9,36 +9,15 @@
 */
 
 /**
- * This sample shows how to create a Lambda function for handling Alexa Skill requests that:
- *
- * - Web service: communicate with an external web service to get events for specified days in history (Wikipedia API)
- * - Pagination: after obtaining a list of events, read a small subset of events and wait for user prompt to read the next subset of events by maintaining session state
- * - Dialog and Session state: Handles two models, both a one-shot ask and tell model, and a multi-turn dialog model.
- * - SSML: Using SSML tags to control how Alexa renders the text-to-speech.
- *
- * Examples:
- * One-shot model:
- * User:  "Alexa, ask History Buff what happened on August thirtieth."
- * Alexa: "For August thirtieth, in 2003, [...] . Wanna go deeper in history?"
- * User: "No."
- * Alexa: "Good bye!"
- *
- * Dialog model:
- * User:  "Alexa, open History Buff"
- * Alexa: "History Buff. What day do you want events for?"
- * User:  "August thirtieth."
- * Alexa: "For August thirtieth, in 2003, [...] . Wanna go deeper in history?"
- * User:  "Yes."
- * Alexa: "In 1995, Bosnian war [...] . Wanna go deeper in history?"
- * User: "No."
- * Alexa: "Good bye!"
+	This is a protoype of the Enphase Alexa skillset.  It allows users to querry information on the operation of their solar array.
  */
 
 
 /**
  * App ID for the skill
  */
-var APP_ID = 'amzn1.echo-sdk-ams.app.7965ade7-3b63-48de-a2dd-6480046f4645'; //replace with 'amzn1.echo-sdk-ams.app.[your-unique-value-here]';
+var APP_ID = 'amzn1.echo-sdk-ams.app.7965ade7-3b63-48de-a2dd-6480046f4645';
+
 
 var https = require('https');
 
@@ -49,19 +28,12 @@ var https = require('https');
 var AlexaSkill = require('./AlexaSkill');
 
 /**
- * URL prefix to download history content from Wikipedia
+ * URL prefix to to request information from the Enphase Elighten API
+ * This hard-coded url should eventually be replaced with Enphase-to-Amazon "Account Linking"
+ * More information can be found at this here:
+ * https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/linking-an-alexa-user-with-a-user-in-your-system
  */
 var urlPrefix = 'https://api.enphaseenergy.com/api/v2/systems/67/summary?key=5e01e16f7134519e70e02c80ef61b692&user_id=4d7a45774e6a41320a';
-
-/**
- * Variable defining number of events to be read at one time
- */
-var paginationSize = 3;
-
-/**
- * Variable defining the length of the delimiter between events
- */
-var delimiterSize = 2;
 
 /**
  * EnphaseSkill is a child of AlexaSkill.
