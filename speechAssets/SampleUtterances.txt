@@ -16,6 +16,7 @@ GetStatus status
 GetStatus whats my status
 GetStatus what is my status
 GetStatus whats the status
-GetStatus what is the status
+GetStatus whats the status
+GetStatus what the status
 GetStatus what is the status of my array
 GetStatus whats the status of my array

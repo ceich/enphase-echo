@@ -83,7 +83,7 @@ EnphaseSkill.prototype.intentHandlers = {
     },
 	
     "AMAZON.HelpIntent": function (intent, session, response) {
-        var speechText = "With Enphase, you can request information on the performance of your Enphase solar array. " +
+        var speechText = "With Enphase, you can request i on the performance of your Enphase solar array. nformation" +
             "For example, you can ask, how much energy has my array produced in the last week?";
         var repromptText = "What do you want to know about your solar array?";
         var speechOutput = {
@@ -119,10 +119,12 @@ EnphaseSkill.prototype.intentHandlers = {
  */
 function getWelcomeResponse(response) {
     // If we wanted to initialize the session to have some attributes we could add those here.
-    var cardTitle = "This Day in History";
-    var repromptText = "With History Buff, you can get historical events for any day of the year.  For example, you could say today, or August thirtieth. Now, which day do you want?";
-    var speechText = "<p>History buff.</p> <p>What day do you want events for?</p>";
-    var cardOutput = "History Buff. What day do you want events for?";
+    var cardTitle = "Enphase Energized";
+    var repromptText = "What do you want to know about how your solar array is performing?";
+    var speechText = "<p>Enphase.</p> <p> With Enphase, you can request information on the performance of your Enphase solar array. " +
+            "For example, you can ask, how much energy has my array produced in the last week?  Now, what do you " + 
+			"want to know about your solar array?</p>";
+    var cardOutput = "Enphase. What do you want to know about your solar array?";
     // If the user either does not reply to the welcome message or says something that is not
     // understood, they will be prompted again with this text.
 
@@ -207,7 +209,7 @@ function handleGetStatusRequest(intent, session, response){
 			var Energy = solar_data.energy_today;
 			StatusStr = "Your array is operating normally. "
 			ReportStr = "It is currently producing " + Power + "watts of power. " +
-			"So far it has produced " +  Energy + "Wh if energy today."
+			"So far it has produced " +  Energy + "Wh of energy today."
 		}else {
 			StatusStr = "There appears to be an issue with you array."
 		}
@@ -246,4 +248,3 @@ exports.handler = function (event, context) {
     var skill = new EnphaseSkill();
     skill.execute(event, context);
 };
-
