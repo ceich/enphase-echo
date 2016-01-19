@@ -145,7 +145,7 @@ function getWelcomeResponse(response) {
  * Get array power
  */
  function handleGetPowerRequest(intent, session, response){
-	getJsonSummaryFromEnphase(function (solar_data) {
+	getSummaryFromEnphase(function (solar_data) {
 		var Power = solar_data.current_power;
         var speechText = "Your array is currently producing " + Power + "W.";
 		var cardTitle = "Enphase solar array power production.";
@@ -249,14 +249,14 @@ function handleGetStatusRequest(intent, session, response){
 //"last_report_at":1449549169,
 //"last_interval_end_at":1449549000}
 
-	getJsonSummaryFromEnphase(function (solar_data) {
+	getSummaryFromEnphase(function (solar_data) {
 		var StatusStr = "";
 		var ReportStr = "";
 		if (solar_data.status == "normal"){
 			var Power = solar_data.current_power;
 			var Energy = solar_data.energy_today;
 			StatusStr = "Your array is operating normally. "
-			ReportStr = "It is currently producing " + Power + "watts of power. " +
+			ReportStr = "It is currently producing " + Power + " watts of power. " +
 			"So far it has produced " +  Energy + "Wh of energy today."
 		}else {
 			StatusStr = "There appears to be an issue with you array."
@@ -291,6 +291,11 @@ function getJsonFromEnphase(requestStr, eventCallback){
 
 function getEnergyFromEnphase(start_date, end_date, eventCallback){
 	var requestStr = urlBase + "energy_lifetime?start_date=" + start_date + "&end_date=" + end_date + "&key=" + api_key + "&user_id=" + user_id;
+	getJsonFromEnphase(requestStr, eventCallback);
+}
+
+function getSummaryFromEnphase(eventCallback){
+	var requestStr = urlBase + "summary?key=" + api_key + "&user_id=" + user_id;
 	getJsonFromEnphase(requestStr, eventCallback);
 }
 
