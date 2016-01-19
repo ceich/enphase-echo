@@ -28,12 +28,14 @@ var https = require('https');
 var AlexaSkill = require('./AlexaSkill');
 
 /**
- * URL prefix to to request information from the Enphase Elighten API
+ * URL info to request information from the Enphase Elighten API
  * This hard-coded url should eventually be replaced with Enphase-to-Amazon "Account Linking"
  * More information can be found at this here:
  * https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/linking-an-alexa-user-with-a-user-in-your-system
  */
-var urlPrefix = 'https://api.enphaseenergy.com/api/v2/systems/67/summary?key=5e01e16f7134519e70e02c80ef61b692&user_id=4d7a45774e6a41320a';
+var urlBase = "https://api.enphaseenergy.com/api/v2/systems/67/";
+var user_id = "4d7a45774e6a41320a";
+var api_key = "5e01e16f7134519e70e02c80ef61b692";
 
 /**
  * EnphaseSkill is a child of AlexaSkill.
@@ -162,18 +164,64 @@ function getWelcomeResponse(response) {
  */
  function handleGetEnergyRequest(intent, session, response){
 	
-	var DurationSlot = intent.slots.Duration;
-	var Duration = "";
-
-	if (DurationSlot && DurationSlot.value) {
-        Duration = DurationSlot.value;
+	var StartDateSlot = intent.slots.StartDate;
+	var today = new Date();
+	var yesterday = new Date();
+	yesterday.setDate(today.getDate()-1);
+	
+	var responseType = "";
+	var monthNames = ["January", "February", "March", "April", "May", "June",
+		"July", "August", "September", "October", "November", "December"
+		];
+	
+	if (StartDateSlot && StartDateSlot.value) {
+		if ((StartDateSlot.value).length== 4){  // year only
+			var date = new Date(StartDateSlot.value);
+			var start_date = new Date(date.getFullYear(), 1, 1);
+			var end_date = new Date(date.getFullYear()+1, 0, 0);
+			responseType = "year";
+		} else if ((StartDateSlot.value).length== 7){// year and month only
+			var date = new Date(StartDateSlot.value);
+			var start_date = new Date(date.getFullYear(), date.getMonth(), 1);
+			var end_date = new Date(date.getFullYear(), date.getMonth()+1, 0);
+			responseType = "month";
+		}else{
+			var start_date = new Date(StartDateSlot.value);
+			var end_date = new Date(start_date);
+			end_date.setDate(end_date.getDate()+1);
+			responseType = "day";
+		}
     } else {
-        Duration = "day";
+        var start_date = new Date(yesterday);
+		var end_date = new Date(today);
     }
 	
-	getJsonSummaryFromEnphase(function (solar_data) {
-		Energy = solar_data.energy_today;
-		var speechText = "Your array has produced " + Energy + "Wh in the last " + Duration;
+	// convert to ISO Date Strings for the Enphase API
+	var start_date_str = start_date.toISOString().split('T')[0];
+	var end_date_str = end_date.toISOString().split('T')[0];
+	var speechText = "";
+	
+/* 	var speechText = start_date_str + " " + end_date_str;
+	var speechOutput = {
+		speech: "<speak>" + speechText + "</speak>",
+		type: AlexaSkill.speechOutputType.SSML
+	};
+	response.tell(speechOutput) */
+		
+	getEnergyFromEnphase(start_date_str, end_date_str, function (solar_data) {
+		var production = solar_data.production;
+		var energy = production.reduce(add,0);
+		function add(a,b){
+			return a+b;
+		}
+		if (responseType == "year"){
+			var speechText = "In " + start_date.getFullYear() + ", your array produced " + energy + " kWh";
+		}else if (responseType == "month"){
+			var speechText = "In " + monthNames[start_date.getMonth()] + " of " + start_date.getFullYear() + ", your array produced " + energy + " kWh";
+		}
+		else{
+			var speechText = "On " + start_date_str + ", your array produced " + energy + " kWh";
+		}
 		var cardTitle = "Enphase solar array energy production.";
 		var cardContent = "This is the card content.";
 		speakText = "This is the speech text."
@@ -224,9 +272,8 @@ function handleGetStatusRequest(intent, session, response){
 	});
 }
 
-function getJsonSummaryFromEnphase(eventCallback){
-	var url = urlPrefix;
-	https.get(url, function(res) {
+function getJsonFromEnphase(requestStr, eventCallback){
+	https.get(requestStr, function(res) {
         var body = '';
 
         res.on('data', function (chunk) {
@@ -240,6 +287,11 @@ function getJsonSummaryFromEnphase(eventCallback){
     }).on('error', function (e) {
         console.log("Got error: ", e);
     });
+}
+
+function getEnergyFromEnphase(start_date, end_date, eventCallback){
+	var requestStr = urlBase + "energy_lifetime?start_date=" + start_date + "&end_date=" + end_date + "&key=" + api_key + "&user_id=" + user_id;
+	getJsonFromEnphase(requestStr, eventCallback);
 }
 
 // Create the handler that responds to the Alexa Request.

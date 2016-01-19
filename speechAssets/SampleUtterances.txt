@@ -1,12 +1,17 @@
-GetEnergy whats my energy
-GetEnergy what is my energy
-GetEnergy how much enery
-GetEnergy whats my energy over the last {Duration}
-GetEnergy what is my energy over the last {Duration}
-GetEnergy whats my energy in the last {Duration}
-GetEnergy what is my energy int the last {Duration}
-GetEnergy how much enery
-GetEnergy what is my energy
+GetEnergy how much energy did I produce on {StartDate}
+GetEnergy how much enery did I produced {StartDate}
+GetEnergy how much energy did my array produce {StartDate}
+GetEnergy how much energy have I produce {StartDate}
+GetEnergy how much energy my re produced {StartDate}
+GetEnergy how much energy my reproduced {StartDate}
+GetEnergy how much energy my reproduce {StartDate}
+GetEnergy how much energy my are reproduce {StartDate}
+GetEnergy how much energy my are reproduced {StartDate}
+GetEnergy how much energy my are you {StartDate}
+GetEnergy how much energy my are you produce {StartDate}
+GetEnergy how much energy my are you produced {StartDate} 
+GetEnergy how much energy I produce {StartDate}
+GetEnergy how much energy I produced {StartDate}
 
 GetPower what is my power
 GetPower whats my power

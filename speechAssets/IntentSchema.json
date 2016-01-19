@@ -10,8 +10,8 @@
       "intent": "GetEnergy",
       "slots": [
         {
-          "name": "Duration",
-          "type": "LIST_OF_DURATIONS"
+          "name": "StartDate",
+          "type": "AMAZON.DATE"
         }
       ]
     },
