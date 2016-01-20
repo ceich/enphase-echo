@@ -1,5 +1,6 @@
 GetEnergy how much energy did I produce on {StartDate}
 GetEnergy how much enery did I produced {StartDate}
+GetEnergy how much enery did I produce {StartDate}
 GetEnergy how much energy did my array produce {StartDate}
 GetEnergy how much energy have I produce {StartDate}
 GetEnergy how much energy my re produced {StartDate}
